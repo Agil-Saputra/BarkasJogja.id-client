@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body { 
+	background-color: rgb(240, 255, 249);
+}
+
+.main-padding {
+  @apply px-6;
+}
+
+.container {
+  @apply max-w-[26.75rem] p-0 m-0 mx-auto;
+}
+
+/* disable step button */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+.mySwiper .swiper-slide {
+	opacity: 0.8;
+	filter: grayscale(.5);
+  }
+  
+  .mySwiper .swiper-slide-thumb-active {
+	opacity: 1;
+	filter: none;
+  }
+
