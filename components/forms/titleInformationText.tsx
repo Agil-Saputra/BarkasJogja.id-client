@@ -16,4 +16,5 @@ const TitleInformationText: FC<InputInfoTextProps> = ({title, helpText}) => {
     </div>
   );
 };
+
 export default TitleInformationText;

@@ -1,32 +1,28 @@
 'use client';
 // External Libaries
 import { FC } from 'react';
-// Next
-import Image from 'next/image';
 // Components
 import Breadcrumbs from '@/components/general/breadcrumbs';
 import OrderComponent from '@/components/page/product/orderComponent';
 import TableRow from '@/components/page/product/tableRow';
 import Container from '@/components/page/product/sectionContainer';
-import SliderImages from '@/components/page/product/sliderImages';
+import SliderImages from '@/components/page/product/slider/sliderImages';
 import ProductPageSkeleton from '@/components/skeleton/productPageSkeleton';
 // Utils
 import useAxios from '@/app/hooks/useAxios';
 import { useScrollTop } from '@/app/utils/scrollTop';
-// Types
-import { ProductsDatasProps } from '@/app/page';
-import { ProductType } from '@/type/productType';
 // Icons
 import { MdWhatsapp } from 'react-icons/md';
 
 type ProductPageProps = {
   params: {
-    productId: string;
+    productSlug: string;
   };
 };
 
 const ProductPage: FC<ProductPageProps> = ({ params }) => {
-  const { response } = useAxios(`products/${params.productId}`);
+  const { response } = useAxios(`products/${params.productSlug}?populate=*`);
+
   useScrollTop();
 
   const address = `${response.attributes?.kabupaten}, ${response.attributes?.kecamatan}, ${response.attributes?.alamat}`;
@@ -42,7 +38,7 @@ const ProductPage: FC<ProductPageProps> = ({ params }) => {
         {product.title}
       </p>
 
-      <div className="bg-white shadow-sm rounded-md my-4 text-center p-2 relative">
+      <div className="bg-white shadow-sm border border-slate-300 rounded-md my-4 text-center p-2 relative">
         <p className="font-semibold text-lg leading-1">Harga</p>
         <p className="text-primary font-semibold text-[2rem] text-center leading-8">
           Rp.{product.harga}
@@ -57,7 +53,7 @@ const ProductPage: FC<ProductPageProps> = ({ params }) => {
       <Container title="Deskripsi Barang">
         <p className="leading-5">{product.deskripsi}</p>
       </Container>
-
+	  
       <Container title="Detail Barang">
         <TableRow
           title="Kategori"
@@ -67,7 +63,7 @@ const ProductPage: FC<ProductPageProps> = ({ params }) => {
       </Container>
 
       <Container title="Lokasi Barang">
-        <TableRow title="Kabupaten" text={product.kabupaten} />
+        <TableRow title="Kabupaten" text={product.kabupaten.data.attributes.kabupaten} />
         <TableRow title="Kecamatan" text={product.kecamatan} />
         <TableRow title="Alamat" text={product.alamat} />
         <a
@@ -82,9 +78,7 @@ const ProductPage: FC<ProductPageProps> = ({ params }) => {
       </Container>
 
       <Container title="Metode Transaksi Yang disediakan Penjual">
-        {product.jarakMaksimal && (
-          <OrderComponent antar={product.jarakMaksimal} />
-        )}
+          <OrderComponent antar={product.jarakMaksimal} ambilDitempat={product.ambilDitempat} />
       </Container>
       <a
         href={`https://wa.me/62${product.nomorWA}`}

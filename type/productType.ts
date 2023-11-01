@@ -2,7 +2,13 @@ export type ProductType = {
 	product_images: FileList | any
 	title: string
 	deskripsi: string
-	kabupaten: string
+	kabupaten: {
+		data : {
+			attributes :{
+				kabupaten : string
+			}
+		}
+	}
 	kecamatan: string
 	alamat: string
 	nomorWA: string
@@ -31,4 +37,5 @@ export type Names =
 	| 'jumlahBarang'
 	| 'nego'
 	| 'ambilDitempat'
+	| 'antarKetempat'
 	;

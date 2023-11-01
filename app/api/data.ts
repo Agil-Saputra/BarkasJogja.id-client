@@ -21,4 +21,3 @@ export const data = [
 	},
 ];
 
-export const categories = ['sepatu', 'laptop', 'sepatu_apik_banget', 'sepatu_tidak-rekomendet', 'tas_mending_gausah_dituku', 'sepatu_elek_banget', '']

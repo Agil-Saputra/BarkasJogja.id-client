@@ -10,7 +10,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Barkasjogja.com Jual Beli Barang Bekas Jogja | 2023',
+  title: 'Barkasjogja.id Jual Beli Barang Bekas Jogja | 2023',
   description: 'Jual Beli Barang Bekas Yogyakarta',
   icons: {
     icon: '/favicon.ico',

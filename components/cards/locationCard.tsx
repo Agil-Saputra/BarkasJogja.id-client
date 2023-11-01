@@ -7,12 +7,11 @@ import { FC } from 'react';
 type LocationCardProps = {
 	title : string
 	logoURL : string
-	LocationID : number
 };
 
-const LocationCard : FC<LocationCardProps> = ({title, logoURL, LocationID}) => {
+const LocationCard : FC<LocationCardProps> = ({title, logoURL, }) => {
   return (
-    <Link href={`/locations/${LocationID}`} className="w-full">
+    <Link href={`/kabupaten/${title}`} className="w-full">
       <Image
         src={logoURL}
 		width={112}

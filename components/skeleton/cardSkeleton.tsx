@@ -19,7 +19,7 @@ const CardSkeleton = ({ sum, cardType }: CategoryCardSkeletonProps) => {
 			return "w-full h-[7rem]"
 		}
 		case('product'): {
-			return "w-full h-[9rem]"
+			return "w-full h-[15rem]"
 		}
 	}
   }

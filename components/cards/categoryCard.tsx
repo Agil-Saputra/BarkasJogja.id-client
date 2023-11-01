@@ -12,7 +12,7 @@ type CategoryCardProps = {
 
 const CategoryCard : FC<CategoryCardProps> = ({categoryImageURL, categoryTitle, categoryID}) => {
   return (
-    <Link href={`/categories/${categoryID}`} className="w-[4rem]">
+    <Link href={`/kategori/${categoryTitle}`} className="w-[4rem]">
       <Image
         src={categoryImageURL}
         alt="Thumbnail Image"

@@ -1,26 +1,28 @@
-'use client';
-'use strict';
+'use client'
+'use strict'
 // External Libaries
-import { ChangeEvent, useState } from 'react';
-import axios from 'axios';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { ChangeEvent, useState } from 'react'
+import axios from 'axios'
+import {  Controller, SubmitHandler, useForm } from 'react-hook-form'
 // Components
-import Input from '@/components/forms/basicInput';
-import SelectAddressComponent from '../../../components/forms/select/selectAddress';
-import InputInfoText from '@/components/forms/titleInformationText';
-import PriceInput from '@/components/forms/priceInput';
-import Image from 'next/image';
-import SelectCategory from '@/components/forms/select/selectCategory';
-import { Checkbox } from '@/components/forms/checkbox';
-import {Button} from '@/components/general/button';
-import HelpText from '@/components/forms/helpText';
+import Input from '@/components/forms/basicInput'
+import SelectAddressComponent from '../../../components/forms/select/selectAddress'
+import InputInfoText from '@/components/forms/titleInformationText'
+import PriceInput from '@/components/forms/priceInput'
+import Image from 'next/image'
+import SelectCategory from '@/components/forms/select/selectCategory'
+import { Checkbox } from '@/components/forms/checkbox'
+import { Button } from '@/components/general/button'
+import HelpText from '@/components/forms/helpText'
 // Icons
-import { AiFillPlusCircle, AiFillDelete } from 'react-icons/ai';
-import { MdDone, MdClose } from 'react-icons/md';
+import { AiFillPlusCircle, AiFillDelete } from 'react-icons/ai'
+import { MdDone, MdClose } from 'react-icons/md'
 // Types
-import { ProductType } from '@/type/productType';
+import { ProductType } from '@/type/productType'
+import { ButtonVariants } from '@/components/general/button'
 
-const BASE_URL = 'http://localhost:1337/api/';
+
+const BASE_URL = 'http://localhost:1337/api/'
 
 const JualBarang = () => {
   const {
@@ -28,78 +30,82 @@ const JualBarang = () => {
     handleSubmit,
     formState: { errors },
     clearErrors,
+	control,
     reset,
-  } = useForm<ProductType>();
+  } = useForm<ProductType>()
 
-  const [previewImages, setPreviewImages] = useState<string[]>([]);
-  const [imageFiles, setimageFiles] = useState<File[]>([]);
+  const [previewImages, setPreviewImages] = useState<string[]>([])
+  const [imageFiles, setimageFiles] = useState<File[]>([])
 
-  const [productId, setProductId] = useState<number | null>(null);
+  const [productSlug, setProductSlug] = useState<string | null>(null)
 
-  const [submiting, setSubmiting] = useState<boolean>(false);
-  const [submitError, setSubmitError] = useState<boolean>(false);
-  const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
-  const [showAntarForm, setShowAntarForm] = useState<boolean>(false);
+  const [submiting, setSubmiting] = useState<boolean>(false)
+  const [submitError, setSubmitError] = useState<boolean>(false)
+  const [submitSuccess, setSubmitSuccess] = useState<boolean>(false)
+  const [showAntarForm, setShowAntarForm] = useState<boolean>(false)
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const files: FileList = event.target.files!;
-    setimageFiles(Array.from(files));
+    const files: FileList = event.target.files!
+    setimageFiles(Array.from(files))
 
     if (files && files.length) {
-      const imagePreviews: string[] = [];
+      const imagePreviews: string[] = []
 
       for (let i = 0; i < files.length; i++) {
-        const reader = new FileReader();
+        const reader = new FileReader()
         reader.onloadend = () => {
-          const result = reader.result as string;
-          imagePreviews.push(result);
+          const result = reader.result as string
+          imagePreviews.push(result)
 
           if (imagePreviews.length === files.length) {
-            setPreviewImages([...previewImages, ...imagePreviews]);
+            setPreviewImages([...previewImages, ...imagePreviews])
           }
-        };
-        reader.readAsDataURL(files[i]);
+        }
+        reader.readAsDataURL(files[i])
       }
     }
-  };
+  }
 
   function handleDeleteImage(id: number) {
-    const updatedImages = previewImages.filter((item, index) => index !== id);
-    const updatedimageFiles = imageFiles.filter((item, index) => index !== id);
-    setPreviewImages(updatedImages);
-    setimageFiles(updatedimageFiles);
+    const updatedImages = previewImages.filter((item, index) => index !== id)
+    const updatedimageFiles = imageFiles.filter((item, index) => index !== id)
+    setPreviewImages(updatedImages)
+    setimageFiles(updatedimageFiles)
   }
 
   const onSubmit: SubmitHandler<ProductType> = async (data) => {
-    setSubmiting(true);
-    document.body.style.overflow = 'hidden';
+    setSubmiting(true)
+    document.body.style.overflow = 'hidden'
     axios
       .post(BASE_URL + 'products', {
-        data: { ...data },
+        data: {
+    		...data,
+    		slug : data.title.split(" ").join("-")
+    	},
       })
       .then((res) => {
-        setProductId(res.data.data.id);
-        const formData = new FormData();
-        imageFiles.map((file) => formData.append(`files`, file));
-        formData.append('ref', 'api::product.product');
-        formData.append('refId', res.data.data.id);
-        formData.append('field', 'product_images');
-        return axios.post(BASE_URL + 'upload', formData);
+        setProductSlug(res.data.data.attributes.slug)
+        const formData = new FormData()
+        imageFiles.map((file) => formData.append(`files`, file))
+        formData.append('ref', 'api::product.product')
+        formData.append('refId', res.data.data.id)
+        formData.append('field', 'product_images')
+        return axios.post(BASE_URL + 'upload', formData)
       })
       .then((res) => {
-        setSubmiting(false);
-        setSubmitSuccess(true);
-        reset();
-        setPreviewImages([]);
+        setSubmiting(false)
+        setSubmitSuccess(true)
+        reset()
+        setPreviewImages([])
       })
       .catch((err) => {
-        setSubmitError(true);
-        console.log(err);
-      });
-  };
+        setSubmitError(true)
+        console.log(err)
+      })
+  }
 
   function handleShowAntarForm(e: React.ChangeEvent<HTMLInputElement>) {
-    setShowAntarForm(e.target.checked);
+    setShowAntarForm(e.target.checked)
   }
 
   return (
@@ -148,15 +154,15 @@ const JualBarang = () => {
 
       <form className="mt-4 grid gap-4" onSubmit={handleSubmit(onSubmit)}>
         <div>
-			<Input
-			  register={register}
-			  placeholder="Nama Barang yang ingin Anda jual"
-			  name="title"
-			  error={errors.title}
-			  type="text"
-			/>
-			<HelpText text='Jenis Barang + Merk + Keterangan Kondisi + Kata yang menarik untuk pembeli seperti murah, termurah, dll.'/>
-		</div>
+          <Input
+            register={register}
+            placeholder="Nama Barang yang ingin Anda jual"
+            name="title"
+            error={errors.title}
+            type="text"
+          />
+          <HelpText text="Jenis Barang + Merk + Keterangan Kondisi + Kata yang menarik untuk pembeli seperti murah, termurah, dll." />
+        </div>
 
         <PriceInput
           error={errors.harga}
@@ -164,25 +170,30 @@ const JualBarang = () => {
           clearErrors={clearErrors}
         />
 
-		<div>
-			<Checkbox label='Harga Bisa di Nego' name='nego'/>
-			<HelpText text='produkmu akan ada badge khusus menandakan barang ini bisa di Nego'/>
-		</div>
+        <div>  
+			<Controller
+            name="nego"
+            control={control}
+            render={({field}) => <Checkbox {...field} label="Harga Bisa di Nego" />}
+          />
+          <HelpText text="produkmu akan ada badge khusus menandakan barang ini bisa di Nego" />
+        </div>
 
+        <div className="flex items-center gap-2">
+          <Input
+            name="jumlahBarang"
+            error={errors.jumlahBarang}
+            register={register}
+            placeholder="Masukan jumlah barang"
+            type="number"
+          />
 
-        <Input
-          name="jumlahBarang"
-          error={errors.jumlahBarang}
-          register={register}
-          placeholder="Masukan jumlah barang"
-          type="number"
-        />
-
-        <SelectCategory
-          register={register}
-          clearErrors={clearErrors}
-          error={errors.kategori}
-        />
+          <SelectCategory
+            register={register}
+            clearErrors={clearErrors}
+            error={errors.kategori}
+          />
+        </div>
 
         <textarea
           rows={5}
@@ -195,7 +206,10 @@ const JualBarang = () => {
           placeholder="Tuliskan deskripsi kondisi, warna, minus dll tentang barang kamu.."
         />
 
-        <InputInfoText title="Masukkan Lokasi " helpText="Masukkan lokasi kamu (ini akan menjadi lokasi COD dan Ambil ditempat)" />
+        <InputInfoText
+          title="Masukkan Lokasi "
+          helpText="Masukkan lokasi kamu (ini akan menjadi lokasi COD dan Ambil ditempat)"
+        />
 
         <input
           className="hidden"
@@ -220,8 +234,17 @@ const JualBarang = () => {
           type="text"
         />
 
-		<Checkbox name='antarKetempat' label='Antar Ketempat Pembeli'  onChange={handleShowAntarForm}/>
-
+        <div>
+          <Checkbox
+            name="antarKetempat"
+            label="Antar Ketempat Pembeli"
+            onChange={handleShowAntarForm}
+          />
+		  
+          {!showAntarForm && (
+            <HelpText text="kamu akan Mengantar barang ketempat pembeli dengan Jarak Maksimal yang bisa kamu sesuaikan" />
+          )}
+        </div>
         {showAntarForm && (
           <>
             <InputInfoText
@@ -245,10 +268,15 @@ const JualBarang = () => {
           </>
         )}
 
-		<div>
-			<Checkbox name='ambilDitempat' label='Ambil Ditempat'/>
-			<HelpText text='Pembeli bisa mengambil barang Di Lokasi kamu'/>
-		</div>
+        <div>
+          
+		  <Controller
+            name="ambilDitempat"
+            control={control}
+            render={({field}) => <Checkbox label="Ambil Ditempat" {...field} />}
+          />
+          <HelpText text="Pembeli bisa mengambil barang Di Lokasi kamu" />
+        </div>
 
         <InputInfoText
           title="Kontak Pribadi"
@@ -264,11 +292,13 @@ const JualBarang = () => {
           type="number"
         />
 
-		<Button type='submit' size='default' variant='default' >Jual Barang</Button>
+        <Button type="submit" size="default" variant="default">
+          Jual Barang
+        </Button>
 
         {submiting && (
           <div className="absolute grid place-items-center w-full left-0 h-full  bottom-0 z-50 bg-black bg-opacity-50 ">
-            <div className="translate-y-20 grid place-items-center">
+            <div className="translate-y-[20rem] grid place-items-center">
               <div className="border-primary border-[5px] rounded-[8rem] w-[4rem] h-[4rem] animate-spin">
                 <div className="bg-white rounded-[5rem] w-[1rem] h-[1rem]"></div>
               </div>
@@ -281,34 +311,34 @@ const JualBarang = () => {
 
         {submitSuccess && (
           <div className="absolute grid place-items-center w-full left-0 h-full  top-0 z-50 bg-black bg-opacity-50 ">
-            <div className="grid gap-3 place-items-center translate-y-20 bg-white shadow-md border-2 border-primary rounded-md p-4">
+            <div className="grid gap-3 place-items-center translate-y-[20rem] bg-white shadow-md border-2 border-primary rounded-md p-4">
               <div className="bg-primary rounded-[8rem] p-2">
                 <MdDone size={40} />
               </div>
               <p>Produk Kamu sukses terupload</p>
               <a
-                href={`/products/${productId}`}
-                className="p-2 bg-secondary text-center text-white w-full font-semibold rounded-md shadow-md"
+                href={`/products/${productSlug}`}
+                className={ButtonVariants({variant: 'default'})}
               >
-                lihat Barang
+                Lihat Barang
               </a>
             </div>
           </div>
         )}
 
         {submitError && (
-          <div className="absolute grid place-items-center w-full left-0 h-full  top-0 z-50 bg-black bg-opacity-50 ">
-            <div className="grid gap-3 place-items-center translate-y-20 bg-white shadow-md border-2 border-red-400 rounded-md p-4">
+          <div className="absolute grid place-items-center w-full left-0 h-full top-0 z-50 bg-black bg-opacity-50 ">
+            <div className="grid gap-3 place-items-center translate-y-[20rem] bg-white shadow-md border-2 border-red-400 rounded-md p-4">
               <div className="bg-red-400 rounded-[8rem] p-2">
                 <MdClose size={40} />
               </div>
               <p className="w-[28ch]">
                 Maaf Produk Gagal terupload, ini merupakan kerusakan pada
-                sistem, Silahkan coba lagi!
+                sistem, Silahkan Refresh Page & coba lagi!
               </p>
               <button
                 type="submit"
-                className="p-2 bg-secondary text-center text-white w-full font-semibold rounded-md shadow-md"
+                className={ButtonVariants({variant: 'default'})}
               >
                 Coba Lagi
               </button>
@@ -317,7 +347,7 @@ const JualBarang = () => {
         )}
       </form>
     </>
-  );
-};
+  )
+}
 
-export default JualBarang;
+export default JualBarang

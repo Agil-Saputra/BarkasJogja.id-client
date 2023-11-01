@@ -2,7 +2,7 @@
 import { ButtonHTMLAttributes, FC } from 'react';
 // Utils
 import {VariantProps, cva} from 'class-variance-authority'
-import { cn } from '@/app/utils/utilities';
+import { cn } from '@/app/utils/twMerge';
 
 
 const ButtonVariants = cva(

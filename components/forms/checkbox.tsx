@@ -1,7 +1,7 @@
 // Types
 import { FC, InputHTMLAttributes } from 'react'
 import { VariantProps, cva } from 'class-variance-authority'
-import { cn } from '@/app/utils/utilities';
+import { cn } from '@/app/utils/twMerge';
 import { MdDone } from 'react-icons/md';
 
 const CheckboxVariants = cva(
@@ -20,6 +20,7 @@ const CheckboxVariants = cva(
 
 interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement>, VariantProps<typeof CheckboxVariants> {
 	label : string
+	value? : string | number | readonly string[] | any
 }
 
 const Checkbox: FC<CheckboxProps> = ({className, label, variant, ...props}) => {
